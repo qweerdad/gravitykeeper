@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0rc1
+## 0.1.0-rc.1
 
 - Add a bilingual Windows desktop application and a scriptable console tool.
 - Capture approved local files and validated SQLite/WAL groups into isolated snapshots.
@@ -8,3 +8,4 @@
 - Export Markdown, structured JSON, plans, tasks, attachments and parent/session indexes.
 - Browse and search local snapshots and verify or create checksum-protected ZIPs.
 - Provide a portable Windows build and fictional fixtures for tests and screenshots.
+- Use the Windows UCRT and the separately installed Microsoft Visual C++ v14 x64 Redistributable.

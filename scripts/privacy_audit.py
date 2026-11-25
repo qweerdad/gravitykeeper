@@ -5,11 +5,13 @@ import io
 import json
 from pathlib import Path, PurePosixPath
 import re
+import runpy
 import subprocess
 from zipfile import ZipFile
 
 
 ROOT = Path(__file__).resolve().parent.parent
+is_microsoft_runtime = runpy.run_path(str(ROOT / "gravitykeeper" / "distribution.py"))["is_microsoft_runtime"]
 PRIVATE_NAME = re.compile(r"(?i)(?:^|/)(?:01_Raw_Backup|02_Conversations_Markdown|03_Conversations_JSON|"
                           r"04_Brain_Artifacts|05_Project_Index|BACKUP_MANIFEST\.json|JOB_REPORT\.json|"
                           r"settings\.json|transcript(?:_full)?\.jsonl|cookies|login data|\.env(?:\..*)?)(?:$|/)")
@@ -80,6 +82,8 @@ def audit_zip(path):
         entries = [info for info in archive.infolist() if not info.is_dir()]
         seen = set()
         for info in entries:
+            if is_microsoft_runtime(info.filename):
+                raise ValueError(f"Microsoft runtime is excluded from public packages: {info.filename}")
             rel = PurePosixPath(info.filename)
             top = rel.parts[0]
             if (rel.is_absolute() or ".." in rel.parts or "\\" in info.filename or ":" in info.filename

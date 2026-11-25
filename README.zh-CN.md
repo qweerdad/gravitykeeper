@@ -6,15 +6,21 @@
 
 可运行 **GravityKeeper.exe --demo**，从合成数据体验实际软件界面。源码版对应命令为 **python desktop.py --demo**。
 
+[发布页面](https://github.com/qweerdad/gravitykeeper/releases)
+
+![GravityKeeper 简体中文会话浏览界面，内容均为合成示例](docs/screenshots/conversations.jpg)
+
+[英文首页](docs/screenshots/overview.jpg) · [备份管理](docs/screenshots/backups.jpg) · [完整性检查](docs/screenshots/integrity.jpg)
+
 ## 使用方法
 
-1. 下载 Windows x64 便携 ZIP 及 SHA-256 文件，核对哈希后完整解压。
-2. 启动 **GravityKeeper.exe**。保持 _internal 目录与两份 EXE 在同一目录。便携版无需预装 Python。
+1. 从 [v0.1.0-rc.1](https://github.com/qweerdad/gravitykeeper/releases/tag/v0.1.0-rc.1) 下载 Windows x64 便携 ZIP 及 SHA-256 文件，核对哈希后完整解压。
+2. 确认已安装 [Microsoft Visual C++ v14 x64 运行库](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)，然后启动 **GravityKeeper.exe**。保持 _internal 目录与两份 EXE 在同一目录。便携版内含 Python，使用 Windows 自带的 UCRT。
 3. 在 **设置** 检查源目录和输出位置。选择 **完整备份** 可一次生成原始副本、Markdown、JSON、项目索引和本地附件。磁盘空间紧张时可先选择 **仅备份原始数据**。
 4. 从 **历史会话** 读取并搜索导出结果，或在 **备份管理** 和 **完整性检查** 打包、核验或打开输出目录。**仅导出会话** 可用于尚未导出的已校验原始快照。
 
 ~~~powershell
-Get-FileHash -Algorithm SHA256 .\GravityKeeper-0.1.0rc1-windows-x64.zip
+Get-FileHash -Algorithm SHA256 .\GravityKeeper-0.1.0-rc.1-windows-x64.zip
 .\GravityKeeper-CLI.exe discover
 .\GravityKeeper-CLI.exe run ".\演示快照" --progress
 .\GravityKeeper-CLI.exe search ".\演示快照" "城市博物馆"
@@ -41,6 +47,6 @@ Get-FileHash -Algorithm SHA256 .\GravityKeeper-0.1.0rc1-windows-x64.zip
 - **锁定或持续写入**。原始数据库仅用文件系统读取，SQLite 只打开隔离副本。若无法稳定复制，查看失败记录并在写入较少时换一个新目标重试。
 - **空间不足**。改用有余量的磁盘或先备份原始数据。ZIP 需存到快照目录外。
 - **找不到软件或工作区**。查看设置中的数据目录。版本来自常见 Windows 安装路径，工作区依赖可读的本地摘要索引。
-- **便携版打不开**。确认已解压整个 ZIP，_internal 目录仍在原处。候选包尚未做代码签名。
+- **便携版打不开**。确认已解压整个 ZIP，_internal 目录仍在原处。若 Windows 报告缺少 VCRUNTIME 或 MSVCP DLL，从 [Microsoft 官方渠道](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)安装或修复 x64 运行库。候选包未做代码签名。
 
 详见[英文说明](README.md)、[隐私边界](PRIVACY.md)、[测试说明](docs/testing.md)和 [MIT 许可证](LICENSE)。

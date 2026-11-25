@@ -6,17 +6,23 @@
 
 GravityKeeper is a free, unofficial, local-first tool. It is independent of Google and cannot unlock accounts, restore online services, or import conversations into Antigravity. It reads the source data without changing it and works without a Google login or an internet connection.
 
-To preview the actual desktop without using personal data, run **GravityKeeper.exe --demo** with the portable build, or **python desktop.py --demo** from a source checkout.
+To preview the desktop with fictional data, run **GravityKeeper.exe --demo** with the portable build, or **python desktop.py --demo** from a source checkout.
+
+[Releases](https://github.com/qweerdad/gravitykeeper/releases)
+
+![GravityKeeper overview showing the fictional demo and a completed backup](docs/screenshots/overview.jpg)
+
+[Backup management](docs/screenshots/backups.jpg) · [Integrity verification](docs/screenshots/integrity.jpg) · [Chinese conversation browser](docs/screenshots/conversations.jpg)
 
 ## Get started
 
-1. Download the Windows x64 portable ZIP and its SHA-256 sidecar from the release when published, or use the locally provided release candidate. Compare the ZIP hash to the sidecar, then extract the entire ZIP into a folder.
-2. Double-click **GravityKeeper.exe**. Keep the bundled _internal directory next to both executables. No Python installation is required for the portable build.
+1. Download the Windows x64 portable ZIP and its SHA-256 sidecar from [v0.1.0-rc.1](https://github.com/qweerdad/gravitykeeper/releases/tag/v0.1.0-rc.1). Compare the ZIP hash to the sidecar, then extract the entire ZIP into a folder.
+2. Make sure the [Microsoft Visual C++ v14 Redistributable for x64](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) is installed. Double-click **GravityKeeper.exe** and keep the bundled _internal directory next to both executables. The portable build includes Python and uses the Windows UCRT.
 3. Review the detected data and backup location in **Settings**. Select **Full backup** to create a timestamped snapshot with raw files, Markdown, JSON, attachments and a workspace index. Select **Raw backup only** if time or disk space is limited.
 4. Open **Conversations** to search exported titles, workspaces and message text. Use **Backups** or **Integrity** to create a ZIP, verify an existing snapshot, or open the output folder.
 
 ~~~powershell
-Get-FileHash -Algorithm SHA256 .\GravityKeeper-0.1.0rc1-windows-x64.zip
+Get-FileHash -Algorithm SHA256 .\GravityKeeper-0.1.0-rc.1-windows-x64.zip
 ~~~
 
 ## Command line and automation
@@ -68,6 +74,6 @@ Read **JOB_REPORT.json** for separate raw-capture and export statuses. A success
 - **Locked files.** Open the snapshot report and review failed source entries. Retry into a new, distinct folder when Antigravity has fewer in-flight writes. GravityKeeper can run while Antigravity is open.
 - **Insufficient space.** Choose another local drive or save raw files first. Full exports and ZIP creation need additional space. A ZIP must be stored outside the snapshot folder.
 - **Missing content.** Preserve the raw snapshot. Compare the per-session anomalies and original logs before relying on a conversation as complete.
-- **The portable GUI does not open.** Extract the full ZIP. Launch the two EXEs only with their bundled _internal directory present. The candidate package is unsigned.
+- **The portable GUI does not open.** Extract the full ZIP and keep _internal beside the EXEs. If Windows reports a missing VCRUNTIME or MSVCP DLL, install or repair the [official Microsoft x64 redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist). The package is unsigned.
 
 See [privacy](PRIVACY.md), [security reporting](SECURITY.md), [tests](docs/testing.md), [third-party notices](THIRD_PARTY_NOTICES.md), and the [MIT License](LICENSE).

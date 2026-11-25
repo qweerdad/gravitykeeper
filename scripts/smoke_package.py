@@ -14,6 +14,7 @@ from zipfile import ZipFile
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from gravitykeeper.demo import fixture
+from gravitykeeper import __version__
 
 
 def digest(path):
@@ -57,6 +58,8 @@ def smoke(path, cli_only=False):
         command = folder / "GravityKeeper-CLI.exe"
         gui = folder / "GravityKeeper.exe"
         version = launch(command, ["--version"], folder, env).strip()
+        if version != __version__:
+            raise RuntimeError(f"Packaged CLI version mismatch: {version}")
         data = fixture(temp / "CLI profile")
         snapshot = temp / "CLI snapshot"
         raw = launch(command, ["run", snapshot, "--source", data], folder, env)

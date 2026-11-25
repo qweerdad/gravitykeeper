@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import runpy
 import shutil
 import sys
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -15,8 +16,8 @@ ROOT = Path(__file__).resolve().parent.parent
 PORTABLE_DOCS = ("README.md", "README.zh-CN.md", "LICENSE", "THIRD_PARTY_NOTICES.md",
                  "PRIVACY.md", "SECURITY.md", "CHANGELOG.md")
 RUNTIME_PACKAGES = {"python", "tk", "tcl", "sqlite", "libffi", "zlib", "libzlib", "openssl",
-                    "vc", "vc14_runtime", "vs2015_runtime", "ucrt", "bzip2", "xz", "xz-tools",
-                    "liblzma", "libzlib", "zlib-ng"}
+                    "bzip2", "xz", "xz-tools", "liblzma", "zlib-ng"}
+is_microsoft_runtime = runpy.run_path(str(ROOT / "gravitykeeper" / "distribution.py"))["is_microsoft_runtime"]
 
 
 def collect_licenses(portable):
@@ -55,21 +56,23 @@ def collect_licenses(portable):
 
 
 def deliver(portable, output):
+    excluded = [p.name for p in portable.rglob("*") if p.is_file() and is_microsoft_runtime(p.name)]
+    if excluded:
+        raise SystemExit("Microsoft runtime files remain in the bundle: " + ", ".join(excluded))
     for name in PORTABLE_DOCS:
         shutil.copy2(ROOT / name, portable / name)
     docs = portable / "docs"
     (docs / "screenshots").mkdir(parents=True, exist_ok=True)
     for name in ("testing.md", "source-license-audit.md"):
         shutil.copy2(ROOT / "docs" / name, docs / name)
-    for name in ("overview.jpg", "conversations.jpg"):
-        source = ROOT / "docs" / "screenshots" / name
-        if source.is_file():
-            shutil.copy2(source, docs / "screenshots" / name)
+    for source in sorted((ROOT / "docs" / "screenshots").glob("*.jpg")):
+        shutil.copy2(source, docs / "screenshots" / source.name)
     collect_licenses(portable)
     metadata = {"python": platform.python_version(), "architecture": platform.machine(),
-                "builder": "PyInstaller 6.17.0", "variant": "Windows portable directory"}
+                "builder": "PyInstaller 6.17.0", "variant": "Windows portable directory",
+                "requires": "Windows UCRT and Microsoft Visual C++ v14 Redistributable (x64)"}
     (portable / "BUILD_INFO.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
-    version = (ROOT / "pyproject.toml").read_text(encoding="utf-8").split('version = "', 1)[1].split('"', 1)[0]
+    version = runpy.run_path(str(ROOT / "gravitykeeper" / "__init__.py"))["__version__"]
     target = output / f"GravityKeeper-{version}-windows-x64.zip"
     checksum = target.with_name(target.name + ".sha256")
     with ZipFile(target, "x", ZIP_DEFLATED, compresslevel=6) as archive:
