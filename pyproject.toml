@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gravitykeeper"
+version = "0.1.0rc1"
+description = "Unofficial offline backup and recovery for Antigravity conversations"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+authors = [{name = "GravityKeeper contributors"}]
+dependencies = []
+
+[project.scripts]
+gravitykeeper = "gravitykeeper.cli:main"
+
+[project.gui-scripts]
+gravitykeeper-desktop = "gravitykeeper.gui:main"
+
+[tool.setuptools]
+packages = ["gravitykeeper"]

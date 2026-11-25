@@ -1,0 +1,36 @@
+name: Windows validation and portable candidate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - run: python -B scripts/privacy_audit.py --git
+      - run: python -B -m unittest discover -s tests -v
+      - run: python -m pip install -r requirements-build.txt
+      - run: python -B scripts/build_windows.py
+      - run: python -B scripts/privacy_audit.py --zip release/GravityKeeper-0.1.0rc1-windows-x64.zip
+      - run: python -B scripts/smoke_package.py release/GravityKeeper-0.1.0rc1-windows-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GravityKeeper-portable-windows-x64
+          path: |
+            release/*.zip
+            release/*.sha256
+          if-no-files-found: error
